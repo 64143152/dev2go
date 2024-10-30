@@ -1,0 +1,32 @@
+<p>company works!</p>
+
+     
+<ng-template #content let-modal style="z-index: 1000;">
+    <div class="modal-header" >
+      <h4 class="modal-title" id="modal-basic-title">จัดการ Country</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">X</button>
+    </div>
+    <div class="modal-body">
+      <form>
+        <div class="mb-3">  
+          name
+          <input class="form-control" [formControl]="name" type="text" />
+        </div>
+        <div class="mb-3">  
+          area
+          <input class="form-control" [formControl]="area" type="number" />
+        </div>
+        <div class="mb-3">  
+           population
+          <input class="form-control" [formControl]="population" type="number" />
+        </div>
+        <div class="mb-3">  
+          flag
+         <input class="form-control" [formControl]="flag" type="text" />
+       </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="save();modal.close('Save click')">Save</button> 
+    </div>
+  </ng-template>

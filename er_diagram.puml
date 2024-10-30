@@ -1,0 +1,21 @@
+@startuml
+entity "จังหวัด (Province)" as Province {
+  +id : int
+  +name : string
+}
+
+entity "อำเภอ (District)" as District {
+  +id : int
+  +name : string
+  +province_id : int
+}
+
+entity "ตำบล (Subdistrict)" as Subdistrict {
+  +id : int
+  +name : string
+  +district_id : int
+}
+
+Province --o{ District : "contains"
+District --o{ Subdistrict : "contains"
+@enduml
