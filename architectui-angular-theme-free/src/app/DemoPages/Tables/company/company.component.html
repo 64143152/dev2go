@@ -1,32 +1,83 @@
 <p>company works!</p>
 
-     
+<button class="btn btn-primary" (click)="open(content)">Add Company</button>
+
 <ng-template #content let-modal style="z-index: 1000;">
-    <div class="modal-header" >
-      <h4 class="modal-title" id="modal-basic-title">จัดการ Country</h4>
+  <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">จัดการ Company</h4>
       <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')">X</button>
-    </div>
-    <div class="modal-body">
+  </div>
+  <div class="modal-body">
       <form>
-        <div class="mb-3">  
-          name
-          <input class="form-control" [formControl]="name" type="text" />
+          <div class="mb-3">  
+              Avatar URL
+              <input class="form-control" [formControl]="avatar" type="text" />
+          </div>
+          <div class="mb-3">  
+              Name
+              <input class="form-control" [formControl]="name" type="text" />
+          </div>
+          <div class="mb-3">  
+              Company
+              <input class="form-control" [formControl]="company" type="text" />
+          </div>
+          <div class="mb-3">  
+            Status
+            <select class="form-control" [formControl]="status">
+                <option value="Open">Open</option>
+                <option value="Close">Close</option>
+            </select>
         </div>
-        <div class="mb-3">  
-          area
-          <input class="form-control" [formControl]="area" type="number" />
-        </div>
-        <div class="mb-3">  
-           population
-          <input class="form-control" [formControl]="population" type="number" />
-        </div>
-        <div class="mb-3">  
-          flag
-         <input class="form-control" [formControl]="flag" type="text" />
-       </div>
+          <div class="mb-3">  
+              Due Date
+              <input class="form-control" [formControl]="dueDate" type="date" />
+          </div>
+          <div class="mb-3">  
+              Target Achievement
+              <input class="form-control" [formControl]="targetAchievement" type="number" />
+          </div>
       </form>
-    </div>
-    <div class="modal-footer">
-        <button type="button" class="btn btn-outline-dark" (click)="save();modal.close('Save click')">Save</button> 
-    </div>
-  </ng-template>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-outline-dark" (click)="save();modal.close('Save click')">Save</button> 
+  </div>
+</ng-template>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Avatar</th>
+            <th scope="col">Name</th>
+            <th scope="col">Company</th>
+            <th scope="col">Status</th>
+            <th scope="col">Target Achievement</th>
+            <th scope="col">Due Date</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let company of companies; index as i">
+            <th scope="row">{{ i + 1 }}</th>
+            <td><img [src]="company.avatar" alt="Avatar" width="50" height="50"></td>
+            <td>{{ company.name }}</td>
+            <td>{{ company.company }}</td>
+            <td>{{ company.status }}</td>
+            <td>{{ company.targetAchievement | number }}</td>
+            <td>{{ company.dueDate | date:'dd/MM/yyyy' }}</td>
+            <td>
+              <button type="button" 
+                      (click)="open(content, company.avatar, company.name, company.company, company.status, company.dueDate, company.targetAchievement, company.companytryId)"  
+                      class="btn-shadow d-inline-flex align-items-center btn btn-info">
+                  <i aria-hidden="true" title="edit" class="fa fa-fw"></i>
+              </button>
+          </td>
+          <td>
+            <button type="button" (click)="delete(company.companytryId)"  class="btn-shadow d-inline-flex align-items-center btn btn-danger">
+              <i aria-hidden="true" title="trash-o" class="fa fa-fw"></i>
+             </button>
+          </td>
+          
+        </tr>
+    </tbody>
+</table>

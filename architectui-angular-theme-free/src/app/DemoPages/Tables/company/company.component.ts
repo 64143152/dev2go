@@ -1,118 +1,97 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
+import { FormControl } from '@angular/forms';
+
+// Interface สำหรับ Company
+interface Company {
+  companytryId?: number;
+  avatar: string;
+  name: string;
+  company: string;
+  status: string;
+  dueDate: string;
+  targetAchievement: number;
+}
 
 @Component({
   selector: 'app-company',
   templateUrl: './company.component.html',
-  styleUrls: ['./company.component.sass']
+  styleUrls: []
 })
 export class CompanyComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
-}
-
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { NgbModal, NgbModalOptions } from '@ng-bootstrap/ng-bootstrap';
-import { FormControl } from '@angular/forms';
-
-interface Country {
-  name: string;
-  flag: string;
-  area: number;
-  population: number;
-  countryId?: number;
-}
-
-const COUNTRIES: Country[] = [
-  {
-    name: 'Russia',
-    flag: 'f/f3/Flag_of_Russia.svg',
-    area: 17075200,
-    population: 146989754
-  },
-  {
-    name: 'Canada',
-    flag: 'c/cf/Flag_of_Canada.svg',
-    area: 9976140,
-    population: 36624199
-  },
-  {
-    name: 'United States',
-    flag: 'a/a4/Flag_of_the_United_States.svg',
-    area: 9629091,
-    population: 324459463
-  },
-  {
-    name: 'China',
-    flag: 'f/fa/Flag_of_the_People%27s_Republic_of_China.svg',
-    area: 9596960,
-    population: 1409517397
-  }
-];
-
-@Component({
-  selector: 'app-regular',
-  templateUrl: './company.component.html',
-  styles: []
-})
-export class RegularComponent implements OnInit {
-
   heading = 'Regular Tables';
   subheading = 'Tables are the backbone of almost all web applications.';
   icon = 'pe-7s-drawer icon-gradient bg-happy-itmeo';
 
-  constructor(private httpClient:HttpClient,private modalService: NgbModal){
+  avatar = new FormControl('');
+  name = new FormControl('');
+  company = new FormControl('');
+  status = new FormControl('');
+  dueDate = new FormControl('');
+  targetAchievement = new FormControl(0);
+  companytryId = new FormControl(0); // เปลี่ยนเป็น companytryId
+
+  companies: Company[] = [];
+
+  constructor(private httpClient: HttpClient, private modalService: NgbModal) {
     this.getData();
-
   }
 
-  countries = COUNTRIES;
+  ngOnInit() {}
 
-  ngOnInit() {
+  getData() {
+    this.httpClient.get<Company[]>('http://lab-v364143152gcmruacth-8080.dev2go.online/api/company/findAll')
+      .subscribe((res) => {
+        this.companies = res; 
+        console.log(res);
+      });
   }
 
-  data: any = {};
-  getData(){
-    this.httpClient.get('http://lab-v364143152gcmruacth-8080.dev2go.online/api/country/findAll').subscribe((res: any) => {
-      this.countries = res;
-      console.log(res);
-    });
-  }
-  name = new FormControl("");
-  area = new FormControl(0);
-  population = new FormControl(0);
-  flag = new FormControl(0);
-  countryId = new FormControl(0);
-  save(){
-    let country ={name:this.name.value,area:this.area.value,population:this.population.value,countryId:this.countryId.value,flag:this.flag.value}
-    this.httpClient.post('http://lab-v364143152gcmruacth-8080.dev2go.online/api/country/save',country).subscribe((res: any) => {
-      this.getData();
-    });
-  }
-  delete(countryId: number){
-    this.httpClient.get('http://lab-v364143152gcmruacth-8080.dev2go.online/api/country/delete?countryId='+countryId).subscribe((res: any) => {
-      this.getData();
-    });
-  }
-   open(content: any, name: string,area:number,population:number,flag: string,countryId: number) {
-    this.name.setValue(name);
-    this.area.setValue(area);
-    this.population.setValue(population);
-    this.flag.setValue(flag);
-    this.countryId.setValue(countryId);
-    let ngbModalOptions: NgbModalOptions = {
-      backdrop: false,
-      keyboard: true
+  save() {
+    const company: Company = {
+      companytryId: this.companytryId.value, // เปลี่ยนเป็น companytryId
+      avatar: this.avatar.value,
+      name: this.name.value,
+      company: this.company.value,
+      status: this.status.value,
+      dueDate: this.dueDate.value,
+      targetAchievement: this.targetAchievement.value
     };
-    this.modalService.open(content, ngbModalOptions).result.then((result) => {
-     
-    }, (reason) => {
-      
-    });
+
+    this.httpClient.post('http://lab-v364143152gcmruacth-8080.dev2go.online/api/company/save', company)
+      .subscribe(() => {
+        this.getData();
+      }, (error) => {
+        console.error('Error saving company:', error);
+      });
   }
 
-}
+  delete(companytryId: number) {
+    this.httpClient.get('http://lab-v364143152gcmruacth-8080.dev2go.online/api/company/delete?companytryId=' + companytryId)
+      .subscribe(() => {
+        this.getData();
+      });
+  }
 
+  open(content: any, avatar: string = '', name: string = '', company: string = '', status: string = '', dueDate: string = '', targetAchievement: number = 0, companytryId: number = 0) {
+    this.avatar.setValue(avatar);
+    this.name.setValue(name);
+    this.company.setValue(company);
+    this.status.setValue(status);
+    this.dueDate.setValue(dueDate);
+    this.targetAchievement.setValue(targetAchievement);
+    this.companytryId.setValue(companytryId);
+
+    const ngbModalOptions: NgbModalOptions = {
+      backdrop: 'static',
+      keyboard: false
+    };
+
+    this.modalService.open(content, ngbModalOptions).result.then((result) => {
+      // handle result
+    }, (reason) => {
+      // handle reason
+    });
+  }
+}

@@ -35,8 +35,8 @@ public class CompanyController {
 
     @GetMapping("/delete") 
     @CrossOrigin(origins = "*")
-    public  void delete(Integer companyId){ 
-         companyService.delete(companyId);
+    public  void delete(Integer companytryId){ 
+         companyService.delete(companytryId);
     }
 
     @RequestMapping("/init") 
